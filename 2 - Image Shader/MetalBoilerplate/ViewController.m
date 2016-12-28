@@ -13,6 +13,8 @@
 @end
 
 @implementation ViewController {
+    // the Image to be processed
+    UIImage *_image;
     // the MTKView used to render all things
     MTKView *_metalView;
     // Non-transient objects
@@ -20,11 +22,9 @@
     id<MTLCommandQueue> _commandQueue;
     id<MTLLibrary> _library;
     id<MTLBuffer> _vertexBuffer;
-    id<MTLBuffer> _indexBuffer;
     id<MTLComputePipelineState> _computePipelineState;
     MTKTextureLoader *_textureLoader;
     id<MTLTexture> _texture;
-    UIImage *_image;
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -33,8 +33,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
     UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:scrollView];
     
@@ -61,10 +59,9 @@
     _library = [_device newDefaultLibrary];
     id<MTLFunction> computeShader = [_library newFunctionWithName:@"compute_shader"];
     
-    // creating compute pipeline
+    // creating compute pipeline state
     _computePipelineState = [_device newComputePipelineStateWithFunction:computeShader error:&err];
     NSAssert(!err, [err description]);
-    
     
     [scrollView addSubview:_metalView];
 }
@@ -74,15 +71,16 @@
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     id<MTLTexture> drawingTexture = view.currentDrawable.texture;
     
+    // set texture to command encoder
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setComputePipelineState:_computePipelineState];
     [encoder setTexture:_texture atIndex:0];
     [encoder setTexture:drawingTexture atIndex:1];
     
+    // dispatch thread groups
     MTLSize threadGroupCount = MTLSizeMake(16, 16, 1);
     MTLSize threadGroups = MTLSizeMake(drawingTexture.width / threadGroupCount.width, drawingTexture.height / threadGroupCount.height, 1);
     [encoder dispatchThreadgroups:threadGroups threadsPerThreadgroup:threadGroupCount];
-
     [encoder endEncoding];
     
     // committing the drawing
