@@ -8,11 +8,6 @@
 
 #import "ViewController.h"
 
-typedef struct {
-    vector_float4 position;
-    vector_float4 color;
-} VertexInfo;
-
 @interface ViewController ()
 
 @end
@@ -53,15 +48,6 @@ typedef struct {
     _metalView.clearColor = MTLClearColorMake(1, 1, 1, 1);
     _metalView.framebufferOnly = NO;
     _metalView.autoResizeDrawable = NO;
-    
-    // creating vertex buffer
-    VertexInfo vertexInfo[] = {
-        {{-0.5, -0.5, 0, 1}, {1, 0, 0, 1}},
-        {{0.5, 0.5, 0, 1}, {0, 1, 0, 1}},
-        {{-0.5, 0.5, 0, 1}, {0, 0, 1, 1}},
-        {{0.5, -0.5, 0, 1}, {1, 1, 0, 1}}
-    };
-    _vertexBuffer = [_device newBufferWithBytes:vertexInfo length:sizeof(vertexInfo) options:MTLResourceOptionCPUCacheModeDefault];
     
     // loading texture
     _metalView.drawableSize = _image.size;
