@@ -14,5 +14,5 @@ kernel void compute_shader(texture2d<float, access::read> input [[texture(0)]],
                     uint2 gid [[thread_position_in_grid]])
 {
     float4 color = input.read(gid);
-    output.write(color, gid);
+    output.write(float4(color.g, color.r, color.b, 1), gid);
 }
