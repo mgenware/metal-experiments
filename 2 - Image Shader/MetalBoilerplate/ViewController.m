@@ -46,12 +46,13 @@
     _metalView.clearColor = MTLClearColorMake(1, 1, 1, 1);
     _metalView.framebufferOnly = NO;
     _metalView.autoResizeDrawable = NO;
+    _metalView.colorPixelFormat = MTLPixelFormatBGRA8Unorm;
     
     // loading texture
     _metalView.drawableSize = _image.size;
     NSError *err = nil;
     _textureLoader = [[MTKTextureLoader alloc] initWithDevice:_device];
-    _texture = [_textureLoader newTextureWithCGImage:_image.CGImage options:@{MTKTextureLoaderOptionSRGB: @NO} error:&err];
+    _texture = [_textureLoader newTextureWithCGImage:_image.CGImage options:nil error:&err];
     NSAssert(!err, [err description]);
     
     // creating command queue and shader functions

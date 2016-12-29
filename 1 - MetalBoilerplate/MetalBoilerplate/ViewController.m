@@ -94,6 +94,9 @@ typedef struct {
     [commandBuffer commit];
 }
 
+- (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size {
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
